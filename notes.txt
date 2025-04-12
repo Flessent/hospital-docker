@@ -1,0 +1,41 @@
+--------------------------------------------------------------------------------------
+|      PROCESS OF DOWNLOAD AND RUNNING A DATABASE IN A DOCKER CONTAINER               |
+|                                                                                     |
+|-------------------------------------------------------------------------------------|
+
+docker pull postgres:latest
+docker run -d -p 5400:5432 --name postgresdb-hospital-container-one  -e POSTGRES_PASSWORD=merkel  postgres:latest // create and run the container with password
+// -d for running the db in background even when we close the terminal
+// -p for publishing the port (actual 5400 in container)
+// the default db name will be postgres
+// docker run -d -p 5400:5432 --name postgresdb-hospital-container-one -e POSTGRES_PASSWORD=mypassword -e POSTGRES_DB=hospital_db postgres:latest
+
+docker images // display available images
+docker ps // display running container  or docker ps -a// display not running but existing container
+
+#docker kill id_container // stop a running container
+#docker rm container_name
+docker logs postgresdb-hospital-container-one // view logs of container
+
+---------------------------------------------APPLICATION------------------------------------------------------------------
+
+docker build -t postgres-hospital-img:v1 .   // create application image
+docker tag postgres-hospital-img:v1 flexe/postgres-hospital-img:v1 // create an instance of this application
+
+docker push flexe/postgres-hospital-img:v1 // push image to docker hub
+docker run -p 8090:8082 flexe/postgres-hospital-img:v1 // run the application in its container
+
+--------------------------------------------CONNECT APPLICATION TO POSTGRES-DB IN DOCKER---------------------------------
+now we want to run the app-container and link it to the postgres-container
+
+docker run -p 8090:8082 --name hostpital-app-and-postgresdb-container-one --link  postgresdb-hospital-container-one:postgres -d flexe/postgres-hospital-img:v1
+
+------------------------------------DEGUGGING INSIDE CONTAINER----------------------------------------------------------------
+ docker logs hostpital-app-and-postgresdb-container-one
+
+
+
+
+
+
+
